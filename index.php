@@ -1,49 +1,60 @@
 <?php
-    /* show php error */
+
+    /**
+     * php-excel-to-database-importer
+     * 
+     * Parses a .xlsx Excel file and imports each row
+     * into a MySQL database table using PDO.
+     */
+
+    // Display all PHP errors
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    /* include SimpleXLSX.php */
     include_once 'src/SimpleXLSX.php';
+    require_once 'config.php';
 
-    $pdo = new PDO ("mysql:host=localhost;dbname=excel_info","cyrus","cyrus", array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)); 
+    // Database connection via PDO
+    $pdo = new PDO(
+        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME,
+        DB_USER,
+        DB_PASS,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
 
-    if ($xlsx = SimpleXLSX::parse('fileExample.xlsx')) { 
-
-        var_dump("ok");
+    if ($xlsx = SimpleXLSX::parse('fileExample.xlsx')) {
 
         foreach ($xlsx->rows() as $key => $value) {
-            if($key > 0) {		
-        
+
+            if ($key > 0) {
+
                 $pdo->beginTransaction();
 
-                $sql = "INSERT INTO infos (firstname, lastname, gender, country, old, date, matricule) VALUES (:firstname, :lastname, :gender, :country, :old, :date, :matricule)";
-                
+                $sql = "INSERT INTO infos (firstname, lastname, gender, country, old, date, matricule)
+                        VALUES (:firstname, :lastname, :gender, :country, :old, :date, :matricule)";
+
                 $stmt = $pdo->prepare($sql);
-                                                                                            
-                $stmt->bindparam(":firstname",$value[1]);
-                $stmt->bindparam(":lastname", $value[2]);
-                $stmt->bindparam(":gender", $value[3]);
-                $stmt->bindparam(":country", $value[4]);
-                $stmt->bindparam(":old", $value[5]);
-                $stmt->bindparam(":date", $value[6]);
-                $stmt->bindparam(":matricule", $value[7]);
-                
-                if($stmt->execute())
-                {
-                    $pdo->commit();				
-                }
-                else
-                {
+
+                $stmt->bindParam(":firstname", $value[1]);
+                $stmt->bindParam(":lastname",  $value[2]);
+                $stmt->bindParam(":gender",    $value[3]);
+                $stmt->bindParam(":country",   $value[4]);
+                $stmt->bindParam(":old",       $value[5]);
+                $stmt->bindParam(":date",      $value[6]);
+                $stmt->bindParam(":matricule", $value[7]);
+
+                if ($stmt->execute()) {
+                    $pdo->commit();
+                } else {
                     $pdo->rollback();
                 }
-
             }
         }
 
         echo "Save Successfully !";
-    }else{
+
+    } else {
         echo "No Save !";
     }
 
