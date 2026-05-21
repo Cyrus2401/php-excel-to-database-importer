@@ -1,0 +1,7 @@
+# Database credentials — never commit this file
+config.php
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.~lock.*
