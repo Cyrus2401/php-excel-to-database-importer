@@ -1,6 +1,6 @@
 # php-excel-to-database-importer
 
-=**PHP tool that parses `.xlsx` Excel files and bulk-imports their rows directly into a MySQL database**.
+**PHP tool that parses `.xlsx` Excel files and bulk-imports their rows directly into a MySQL database**.
 
 ---
 
@@ -32,11 +32,22 @@ cd php-excel-to-database-importer
 
 ## Configuration
 
-1. **Database** — Create a MySQL database and update the credentials in `index.php`:
+1. **Database credentials** — Copy the example config file and fill in your details:
+
+```bash
+cp config.example.php config.php
+```
+
+Then edit `config.php`:
 
 ```php
-$pdo = new PDO("mysql:host=localhost;dbname=your_database", "your_user", "your_password");
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'your_database');
+define('DB_USER', 'your_username');
+define('DB_PASS', 'your_password');
 ```
+
+> ⚠️ `config.php` is listed in `.gitignore` — your credentials will never be pushed to GitHub.
 
 2. **Table** — Make sure your target table exists. Example schema matching the default script:
 
