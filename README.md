@@ -1,21 +1,42 @@
-# php-excel-to-database-importer
+# PHP Excel to Database Importer
 
-**PHP tool that parses `.xlsx` Excel files and bulk-imports their rows directly into a MySQL database**.
+Lightweight PHP utility to parse `.xlsx` Excel files and bulk-import their rows directly into a MySQL database with transaction support.
 
 ---
 
 ## Description
 
-`php-excel-to-database-importer` is a minimal PHP script designed to automate the import of Excel data into a MySQL database. It reads a `.xlsx` file row by row, maps each column to a database field, and inserts the records using PDO with transaction support for data integrity. Simple to set up and easy to adapt to any table structure.
+**PHP Excel to Database Importer** automates the import of Excel spreadsheet data into MySQL. It reads `.xlsx` files row by row, maps each column to database fields, and inserts records using PDO with transaction support for data integrity. Designed for simplicity and easy customization to any table structure.
 
-> **Note:** This tool only supports `.xlsx` files. Legacy `.xls` format is not supported.
+> **Note:** This tool supports `.xlsx` files only. Legacy `.xls` format is not supported.
 
 ---
 
-## Tech Stack
+## Features
+
+- Parse `.xlsx` Excel files
+- Bulk import rows into MySQL database
+- PDO-based database connection with error handling
+- Transaction support for data integrity
+- Easy configuration and customization
+- Ready-to-use example table schema
+
+---
+
+## Technologies
 
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![PDO](https://img.shields.io/badge/PDO-grey?style=for-the-badge)
+
+---
+
+## Requirements
+
+- **PHP** ≥ 5.3
+- **MySQL** Server
+- **PHP XML Extension** (required for SimpleXLSX library)
+- **PDO MySQL Driver**
 
 ---
 
@@ -32,13 +53,15 @@ cd php-excel-to-database-importer
 
 ## Configuration
 
-1. **Database credentials** — Copy the example config file and fill in your details:
+### 1. Database Credentials
+
+Copy the example configuration file:
 
 ```bash
 cp config.example.php config.php
 ```
 
-Then edit `config.php`:
+Edit `config.php` with your database credentials:
 
 ```php
 define('DB_HOST', 'localhost');
@@ -47,9 +70,11 @@ define('DB_USER', 'your_username');
 define('DB_PASS', 'your_password');
 ```
 
-> ⚠️ `config.php` is listed in `.gitignore` — your credentials will never be pushed to GitHub.
+> ⚠️ `config.php` is listed in `.gitignore` — your credentials will never be pushed to version control.
 
-2. **Table** — Make sure your target table exists. Example schema matching the default script:
+### 2. Database Table
+
+Create your target table in MySQL. Example schema (matching the default script):
 
 ```sql
 CREATE TABLE infos (
@@ -64,7 +89,9 @@ CREATE TABLE infos (
 );
 ```
 
-3. **Excel file** — Place your `.xlsx` file in the project root and update the filename in `index.php`:
+### 3. Excel File
+
+Place your `.xlsx` file in the project root directory. Update the filename in `index.php`:
 
 ```php
 if ($xlsx = SimpleXLSX::parse('yourfile.xlsx'))
@@ -74,22 +101,69 @@ if ($xlsx = SimpleXLSX::parse('yourfile.xlsx'))
 
 ## Usage
 
-Run the script via your local PHP server or a web server (e.g. Apache / WAMP / XAMPP):
+Run the import script using PHP's built-in server or your web server (Apache, WAMP, XAMPP):
 
 ```bash
 php -S localhost:8000
 ```
 
-Then open your browser at:
+Open your browser at:
 
 ```
 http://localhost:8000/index.php
 ```
 
-If the import succeeds, you will see:
+On successful import, you will see:
 
 ```
 Save Successfully !
 ```
 
+If an error occurs, you will see:
+
+```
+No Save !
+```
+
 ---
+
+## Project Structure
+
+```
+php-excel-to-database-importer/
+├── index.php              # Main import script
+├── config.example.php     # Configuration template
+├── config.php             # Your database credentials (gitignored)
+├── src/
+│   └── SimpleXLSX.php    # Excel parser library
+├── README.md              # This file
+└── fileExample.xlsx       # Your Excel file to import
+```
+
+---
+
+## Customization
+
+To adapt the script to your table structure:
+
+1. Update the SQL query in `index.php`:
+
+```php
+$sql = "INSERT INTO your_table (col1, col2, col3, ...)
+        VALUES (:col1, :col2, :col3, ...)";
+```
+
+2. Update the parameter bindings to match your columns:
+
+```php
+$stmt->bindParam(":col1", $value[1]);
+$stmt->bindParam(":col2", $value[2]);
+```
+
+The array index (`$value[0]`, `$value[1]`, etc.) corresponds to each column in your Excel file, starting from column 0.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
